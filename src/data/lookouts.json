@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "name": "Elden",
+    "lat": 35.24111154104116,
+    "lng": -111.59749862482296,
+    "elevation_ft": 9299,
+    "forest": "Coconino"
+  },
+  {
+    "id": 2,
+    "name": "Woody Mountain",
+    "lat": 35.14231243022519,
+    "lng": -111.75150933739845,
+    "elevation_ft": 8094,
+    "forest": "Coconino"
+  },
+  {
+    "id": 3,
+    "name": "O'Leary",
+    "lat": 35.40155925184233,
+    "lng": -111.5264715755759,
+    "elevation_ft": 8916,
+    "forest": "Coconino"
+  },
+  {
+    "id": 4,
+    "name": "East Pocket",
+    "lat": 34.97566489827702,
+    "lng": -111.76845410066042,
+    "elevation_ft": 7196,
+    "forest": "Coconino"
+  },
+  {
+    "id": 5,
+    "name": "Hutch Mountain",
+    "lat": 34.80202889704346,
+    "lng": -111.39023468274047,
+    "elevation_ft": 8537,
+    "forest": "Coconino"
+  },
+  {
+    "id": 6,
+    "name": "Turkey Butte",
+    "lat": 35.03210094789717,
+    "lng": -111.90409814519013,
+    "elevation_ft": 7798,
+    "forest": "Coconino"
+  },
+  {
+    "id": 7,
+    "name": "Moqui",
+    "lat": 34.56484891073119,
+    "lng": -111.16910682163653,
+    "elevation_ft": 7474,
+    "forest": "Coconino"
+  },
+  {
+    "id": 8,
+    "name": "Volunteer",
+    "lat": 35.21808538398121,
+    "lng": -111.895503230324,
+    "elevation_ft": 8390,
+    "forest": "Coconino"
+  },
+  {
+    "id": 9,
+    "name": "Apache Maid",
+    "lat": 34.72540870777329,
+    "lng": -111.55060462850463,
+    "elevation_ft": 7301,
+    "forest": "Coconino"
+  }
+]
