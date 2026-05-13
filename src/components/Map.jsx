@@ -49,7 +49,7 @@ function RightClickToCopy() {
   return null;
 }
 
-export default function Map({ shots }) {
+export default function Map({ shots, onTowerClick }) {
   const { rays, intersections } = useMemo(() => resolveShots(shots), [shots]);
 
   return (
@@ -66,7 +66,12 @@ export default function Map({ shots }) {
       <RightClickToCopy />
 
       {lookouts.map((lo) => (
-        <Marker key={lo.id} position={[lo.lat, lo.lng]} icon={lookoutIcon}>
+        <Marker
+          key={lo.id}
+          position={[lo.lat, lo.lng]}
+          icon={lookoutIcon}
+          eventHandlers={{ click: () => onTowerClick(lo) }}
+        >
           <Popup>
             <strong>{lo.name}</strong>
             <br />

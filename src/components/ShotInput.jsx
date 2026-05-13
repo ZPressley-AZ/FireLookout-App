@@ -8,7 +8,6 @@ function nowLocalIso() {
   return d.toISOString().slice(0, 16);
 }
 
-// Build the sorted list of forests and group lookouts by forest
 const forests = [...new Set(lookouts.map((l) => l.forest))].sort();
 const lookoutsByForest = forests.reduce((acc, f) => {
   acc[f] = lookouts
@@ -17,22 +16,32 @@ const lookoutsByForest = forests.reduce((acc, f) => {
   return acc;
 }, {});
 
-export default function ShotInput({ onAddShot }) {
-  const [selectedForest, setSelectedForest] = useState(forests[0]);
-  const [lookoutId, setLookoutId] = useState(lookoutsByForest[forests[0]][0].id);
+export default function ShotInput({
+  onAddShot,
+  selectedForest,
+  setSelectedForest,
+  selectedLookoutId,
+  setSelectedLookoutId,
+}) {
   const [bearing, setBearing] = useState('');
   const [range, setRange] = useState('');
   const [useMagnetic, setUseMagnetic] = useState(false);
   const [time, setTime] = useState(nowLocalIso());
+  const [timeEdited, setTimeEdited] = useState(false);
 
   const handleForestChange = (newForest) => {
     setSelectedForest(newForest);
-    setLookoutId(lookoutsByForest[newForest][0].id);
+    setSelectedLookoutId(lookoutsByForest[newForest][0].id);
+  };
+
+  const handleTimeChange = (e) => {
+    setTime(e.target.value);
+    setTimeEdited(true);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const lookout = lookouts.find((l) => l.id === Number(lookoutId));
+    const lookout = lookouts.find((l) => l.id === Number(selectedLookoutId));
     if (!lookout) return;
 
     const bearingNum = parseFloat(bearing);
@@ -40,18 +49,23 @@ export default function ShotInput({ onAddShot }) {
     if (Number.isNaN(bearingNum) || Number.isNaN(rangeNum)) return;
     if (rangeNum <= 0) return;
 
+    // If the user hasn't manually changed the time field, use the actual
+    // current moment rather than whatever was prefilled when the page loaded.
+    const effectiveTime = timeEdited && time ? time : nowLocalIso();
+
     onAddShot({
       lookout,
       bearing: bearingNum,
       range: rangeNum,
       useMagnetic,
       declination: DEFAULT_DECLINATION_DEG,
-      time,
+      time: effectiveTime,
     });
 
     setBearing('');
     setRange('');
     setTime(nowLocalIso());
+    setTimeEdited(false);
   };
 
   return (
@@ -59,23 +73,22 @@ export default function ShotInput({ onAddShot }) {
       <h3>Add a smoke</h3>
 
       <label>
-        Region
+        Forest
         <select value={selectedForest} onChange={(e) => handleForestChange(e.target.value)}>
           {forests.map((f) => (
-            <option key={f} value={f}>
-              {f}
-            </option>
+            <option key={f} value={f}>{f}</option>
           ))}
         </select>
       </label>
 
       <label>
         Lookout
-        <select value={lookoutId} onChange={(e) => setLookoutId(e.target.value)}>
+        <select
+          value={selectedLookoutId}
+          onChange={(e) => setSelectedLookoutId(Number(e.target.value))}
+        >
           {lookoutsByForest[selectedForest].map((l) => (
-            <option key={l.id} value={l.id}>
-              {l.name}
-            </option>
+            <option key={l.id} value={l.id}>{l.name}</option>
           ))}
         </select>
       </label>
@@ -123,7 +136,7 @@ export default function ShotInput({ onAddShot }) {
         <input
           type="datetime-local"
           value={time}
-          onChange={(e) => setTime(e.target.value)}
+          onChange={handleTimeChange}
         />
       </label>
 

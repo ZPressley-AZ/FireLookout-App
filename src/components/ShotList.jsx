@@ -1,3 +1,9 @@
+function formatTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
 export default function ShotList({ shots, onRemoveShot, onClearAll }) {
   if (shots.length === 0) {
     return (
@@ -22,6 +28,7 @@ export default function ShotList({ shots, onRemoveShot, onClearAll }) {
               <strong>{shot.lookout.name}</strong>
               <span className="shot-details">
                 {shot.bearing}° {shot.useMagnetic ? 'mag' : 'true'} &middot; {shot.range} mi
+                {shot.time && <> &middot; {formatTime(shot.time)}</>}
               </span>
             </div>
             <button
