@@ -2,11 +2,33 @@ import { useState } from 'react';
 import lookouts from '../data/lookouts.json';
 import { DEFAULT_DECLINATION_DEG } from '../lib/geo';
 
+function nowLocalIso() {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 16);
+}
+
+// Build the sorted list of forests and group lookouts by forest
+const forests = [...new Set(lookouts.map((l) => l.forest))].sort();
+const lookoutsByForest = forests.reduce((acc, f) => {
+  acc[f] = lookouts
+    .filter((l) => l.forest === f)
+    .sort((a, b) => a.name.localeCompare(b.name));
+  return acc;
+}, {});
+
 export default function ShotInput({ onAddShot }) {
-  const [lookoutId, setLookoutId] = useState(lookouts[0].id);
+  const [selectedForest, setSelectedForest] = useState(forests[0]);
+  const [lookoutId, setLookoutId] = useState(lookoutsByForest[forests[0]][0].id);
   const [bearing, setBearing] = useState('');
   const [range, setRange] = useState('');
   const [useMagnetic, setUseMagnetic] = useState(false);
+  const [time, setTime] = useState(nowLocalIso());
+
+  const handleForestChange = (newForest) => {
+    setSelectedForest(newForest);
+    setLookoutId(lookoutsByForest[newForest][0].id);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,11 +46,12 @@ export default function ShotInput({ onAddShot }) {
       range: rangeNum,
       useMagnetic,
       declination: DEFAULT_DECLINATION_DEG,
+      time,
     });
 
-    // Clear bearing & range, but keep the lookout selected for fast follow-ups
     setBearing('');
     setRange('');
+    setTime(nowLocalIso());
   };
 
   return (
@@ -36,9 +59,20 @@ export default function ShotInput({ onAddShot }) {
       <h3>Add a smoke</h3>
 
       <label>
+        Region
+        <select value={selectedForest} onChange={(e) => handleForestChange(e.target.value)}>
+          {forests.map((f) => (
+            <option key={f} value={f}>
+              {f}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label>
         Lookout
         <select value={lookoutId} onChange={(e) => setLookoutId(e.target.value)}>
-          {lookouts.map((l) => (
+          {lookoutsByForest[selectedForest].map((l) => (
             <option key={l.id} value={l.id}>
               {l.name}
             </option>
@@ -82,6 +116,15 @@ export default function ShotInput({ onAddShot }) {
           onChange={(e) => setUseMagnetic(e.target.checked)}
         />
         Magnetic bearing (auto-correct {DEFAULT_DECLINATION_DEG}° E)
+      </label>
+
+      <label>
+        Time reported
+        <input
+          type="datetime-local"
+          value={time}
+          onChange={(e) => setTime(e.target.value)}
+        />
       </label>
 
       <button type="submit">Plot smoke</button>

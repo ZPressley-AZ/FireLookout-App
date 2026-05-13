@@ -5,7 +5,6 @@ import 'leaflet/dist/leaflet.css';
 import lookouts from '../data/lookouts.json';
 import { resolveShots } from '../lib/geo';
 
-// Custom lookout icon — uses /lookout-icon.png from public folder
 const lookoutIcon = new L.Icon({
   iconUrl: '/lookout-icon.png',
   iconSize: [28, 28],
@@ -13,14 +12,15 @@ const lookoutIcon = new L.Icon({
   popupAnchor: [0, -28],
 });
 
-// Default center: roughly center of the nine lookouts
-const DEFAULT_CENTER = [35.0, -111.6];
-const DEFAULT_ZOOM = 9;
+const DEFAULT_CENTER = [34.5, -111.3];
+const DEFAULT_ZOOM = 7;
 
-/**
- * Component that listens for right-clicks on the map and copies
- * the clicked lat/lng to the clipboard. Less obtrusive than alert().
- */
+function formatTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
 function RightClickToCopy() {
   const map = useMap();
 
@@ -30,7 +30,6 @@ function RightClickToCopy() {
       const text = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
       try {
         await navigator.clipboard.writeText(text);
-        // Light feedback via a temporary tooltip
         L.popup({ closeButton: false, autoClose: true, className: 'copied-popup' })
           .setLatLng(e.latlng)
           .setContent(`Copied: ${text}`)
@@ -66,20 +65,18 @@ export default function Map({ shots }) {
 
       <RightClickToCopy />
 
-      {/* Lookout markers */}
       {lookouts.map((lo) => (
         <Marker key={lo.id} position={[lo.lat, lo.lng]} icon={lookoutIcon}>
           <Popup>
             <strong>{lo.name}</strong>
             <br />
-            {lo.elevation_ft.toLocaleString()} ft &middot; {lo.forest} NF
+            {lo.forest} &middot; {lo.county} County
             <br />
             {lo.lat.toFixed(5)}, {lo.lng.toFixed(5)}
           </Popup>
         </Marker>
       ))}
 
-      {/* Azimuth rays */}
       {rays.map((ray, i) => (
         <Polyline
           key={`ray-${i}`}
@@ -96,7 +93,6 @@ export default function Map({ shots }) {
         />
       ))}
 
-      {/* Intersections — likely smoke locations */}
       {intersections.map((pt, i) => (
         <CircleMarker
           key={`xsec-${i}`}
@@ -115,8 +111,10 @@ export default function Map({ shots }) {
             {pt.lat.toFixed(5)}, {pt.lng.toFixed(5)}
             <br />
             {pt.shotA.lookout.name}: {pt.distanceFromA.toFixed(1)} mi
+            {pt.shotA.time && <> &middot; {formatTime(pt.shotA.time)}</>}
             <br />
             {pt.shotB.lookout.name}: {pt.distanceFromB.toFixed(1)} mi
+            {pt.shotB.time && <> &middot; {formatTime(pt.shotB.time)}</>}
           </Popup>
         </CircleMarker>
       ))}
