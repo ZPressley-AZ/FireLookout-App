@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import lookouts from '../data/lookouts.json';
-import { DEFAULT_DECLINATION_DEG } from '../lib/geo';
 
 function nowLocalIso() {
   const d = new Date();
@@ -25,7 +24,6 @@ export default function ShotInput({
 }) {
   const [bearing, setBearing] = useState('');
   const [range, setRange] = useState('');
-  const [useMagnetic, setUseMagnetic] = useState(false);
   const [time, setTime] = useState(nowLocalIso());
   const [timeEdited, setTimeEdited] = useState(false);
 
@@ -57,8 +55,6 @@ export default function ShotInput({
       lookout,
       bearing: bearingNum,
       range: rangeNum,
-      useMagnetic,
-      declination: DEFAULT_DECLINATION_DEG,
       time: effectiveTime,
     });
 
@@ -120,15 +116,6 @@ export default function ShotInput({
           placeholder="miles"
           required
         />
-      </label>
-
-      <label className="checkbox-label">
-        <input
-          type="checkbox"
-          checked={useMagnetic}
-          onChange={(e) => setUseMagnetic(e.target.checked)}
-        />
-        Magnetic bearing (auto-correct {DEFAULT_DECLINATION_DEG}° E)
       </label>
 
       <label>

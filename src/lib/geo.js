@@ -158,7 +158,7 @@ export function intersectionOfBearings(lat1, lng1, brng1, lat2, lng2, brng2) {
 }
 
 /**
- * Given an array of shots [{ lookout, bearing, range, useMagnetic, declination }],
+ * Given an array of shots [{ lookout, bearing, range }],
  * compute the resolved endpoint for each (for drawing the ray) and all pairwise
  * intersections of the rays (for showing likely smoke locations).
  *
@@ -166,16 +166,13 @@ export function intersectionOfBearings(lat1, lng1, brng1, lat2, lng2, brng2) {
  */
 export function resolveShots(shots) {
   const rays = shots.map((shot) => {
-    const trueBearing = shot.useMagnetic
-      ? magneticToTrue(shot.bearing, shot.declination ?? DEFAULT_DECLINATION_DEG)
-      : shot.bearing;
     const end = destinationPoint(
       shot.lookout.lat,
       shot.lookout.lng,
-      trueBearing,
+      shot.bearing,
       shot.range
     );
-    return { shot, trueBearing, end };
+    return { shot, trueBearing: shot.bearing, end };
   });
 
   const intersections = [];

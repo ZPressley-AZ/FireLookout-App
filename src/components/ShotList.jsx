@@ -27,7 +27,7 @@ export default function ShotList({ shots, onRemoveShot, onClearAll }) {
             <div className="shot-summary">
               <strong>{shot.lookout.name}</strong>
               <span className="shot-details">
-                {shot.bearing}° {shot.useMagnetic ? 'mag' : 'true'} &middot; {shot.range} mi
+                {shot.bearing}° &middot; {shot.range} mi
                 {shot.time && <> &middot; {formatTime(shot.time)}</>}
               </span>
             </div>
