@@ -1,16 +1,57 @@
-# React + Vite
+# FireLookout
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A smoke triangulation tool for lookout tower smoke reports.  Users enter an azimuth and range to a smoke; reports from multiple towers are plotted on a map and their intersection identifies the likely smoke location.
 
-Currently, two official plugins are available:
+## Using the App
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. **Select a forest and lookout tower** from the dropdowns in the *Add a smoke* panel.
+2. **Enter the azimuth** (0–360°, true bearing) and **range** in miles.
+3. **Set the time reported** — defaults to current time, but can be adjusted.
+4. Click **Plot smoke**. The ray appears on the map.
+5. Add a second (or third) report from a different tower. Where the rays intersect, a marker is placed showing the probable smoke location.
+6. Use **Remove (✕)** next to any entry in the *Active smokes* list to delete it, or **Clear all** to start over.
 
-## React Compiler
+## Local Development
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**Prerequisites:** Node.js 22+
 
-## Expanding the ESLint configuration
+```bash
+npm install
+npm run dev        # starts the Vite dev server at http://localhost:5173
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Other useful commands:
+
+```bash
+npm run build      # production build → dist/
+npm run preview    # serve the production build locally
+npm run lint       # run ESLint
+```
+
+## Publishing a New Version
+
+This app is deployed on [Netlify](https://www.netlify.com). Every push to the `main` branch triggers an automatic build and deploy — no manual step is required.
+
+**Workflow:**
+
+```bash
+git add <files>
+git commit -m "describe your change"
+git push origin main
+```
+
+Netlify picks up the push, runs `npm run build`, and publishes the `dist/` directory. Build status and deploy logs are visible in the Netlify dashboard.
+
+### Secrets and Environment Variables
+
+**Do not commit access tokens, API keys, or other secrets to this repository.**
+
+If the app ever requires environment variables (e.g., a map tile API key), store them as [Netlify environment variables](https://docs.netlify.com/environment-variables/overview/) in the Netlify site dashboard under **Site configuration → Environment variables**. Vite will expose variables prefixed with `VITE_` to the client bundle at build time.
+
+For local development, create a `.env.local` file (already listed in `.gitignore`) and add variables there:
+
+```
+VITE_EXAMPLE_KEY=your-value-here
+```
+
+Never add `.env.local` or any file containing real secrets to version control.
